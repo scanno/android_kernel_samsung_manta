@@ -24,6 +24,8 @@
 #include <linux/hw_breakpoint.h>
 #include <linux/regset.h>
 #include <linux/audit.h>
+#include <linux/tracehook.h>
+#include <linux/unistd.h>
 
 #include <asm/pgtable.h>
 #include <asm/traps.h>
@@ -945,6 +947,7 @@ asmlinkage int syscall_trace(int why, struct pt_regs *regs, int scno)
 		send_sig(current->exit_code, current, 1);
 		current->exit_code = 0;
 	}
+	ptrace_report_syscall(regs);
 	regs->ARM_ip = ip;
 
 	return current_thread_info()->syscall;
